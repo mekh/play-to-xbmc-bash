@@ -15,11 +15,15 @@ then
 fi
 
 if echo $ID | grep "facebook"; then
-  ID=$(curl -s "$ID" |sed -n 's/.*_src_no_ratelimit":"\([^"]*\)".*/\1/p' | sed 's/\\\//\//g')
+  URL=$(curl -s "$ID" |sed -n 's/.*hd_src_no_ratelimit":"\([^"]*\)".*/\1/p' | sed 's/\\\//\//g')
+  if [ "$URL" == "" ]; then
+    URL=$(curl -s "$ID" |sed -n 's/.*sd_src_no_ratelimit":"\([^"]*\)".*/\1/p' | sed 's/\\\//\//g')
+  fi
+  ID=$URL
 fi
 
 function xbmc_req {
-  curl -s -i -X POST --header "Content-Type: application/json" -d "$1" http://$XBMC_USER:$XBMC_PASS@$XBMC_HOST:$XBMC_PORT/jsonrpc 
+  curl -s -i -X POST --header "Content-Type: application/json" -d "$1" http://$XBMC_USER:$XBMC_PASS@$XBMC_HOST:$XBMC_PORT/jsonrpc
 }
 
 echo -n "Opening video id $ID on $XBMC_HOST ..."
